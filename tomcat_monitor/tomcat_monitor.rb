@@ -198,7 +198,6 @@ class TomcatMonitor < Scout::Plugin
     logdir = option(:logdir) || '/opt/jboss/server/default/log/'
     logfile = (logdir + `ls -tr #{logdir} | grep localhost_access_log | tail -1`).chomp
     raise "#{logfile} does not exist" unless File.exist?(logfile)
-    p logfile
     @logdir = logfile
     logfile
   end
