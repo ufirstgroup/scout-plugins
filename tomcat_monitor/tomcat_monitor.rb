@@ -14,6 +14,7 @@ class TomcatMonitor < Scout::Plugin
   EOS
 
   def build_report
+    @logdir = nil
     @last_line_processed = 0
     @last_date_processed = nil
     @request_comparison = {} # request => {:max => , :count => }
