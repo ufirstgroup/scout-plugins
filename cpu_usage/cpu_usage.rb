@@ -5,6 +5,7 @@
 #
 
 class CpuUsage < Scout::Plugin
+  needs "time"
   def build_report
     stats = CpuStats.fetch
 
