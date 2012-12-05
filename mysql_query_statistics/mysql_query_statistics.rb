@@ -75,7 +75,7 @@ class MysqlQueryStatistics < Scout::Plugin
     result = `mysql #{connection_options} -e '#{query}' --batch 2>&1`
     if $?.success?
       output = {}
-      result.each do |line|
+      result.split(/\n/).each do |line|
         row = line.split(/\t/)
         output[row.first] = row.last.to_i
       end
