@@ -50,10 +50,10 @@ class RedisMonitor < Scout::Plugin
                              when 'up' then 1
                              when 'down' then 0
                              end
-        report(:master_link_status => master_link_status) 
+        report(:master_link_status => master_link_status)
         report(:master_last_io_seconds_ago => info['master_last_io_seconds_ago'])
         report(:master_sync_in_progress => info['master_sync_in_progress'])
-      end 
+      end
 
       # General Stats
       %w(changes_since_last_save connected_clients connected_slaves bgsave_in_progress).each do |key|
