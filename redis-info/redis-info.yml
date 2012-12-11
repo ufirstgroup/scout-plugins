@@ -25,12 +25,12 @@ metadata:
     precision: 2
     label: Commands
   hits_per_sec:
-    units: q/sec
+    units: /sec
     larger_is_better: 1
     precision: 2
     label: Hits
   misses_per_sec:
-    units: q/sec
+    units: /sec
     larger_is_better: 0
     precision: 2
     label: Misses
