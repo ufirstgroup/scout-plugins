@@ -10,6 +10,10 @@ class RedisMonitor < Scout::Plugin
     name: Port
     notes: Redis port to pass to the client library.
     default: 6379
+  client_path:
+    name: Unix socket path
+    notes: Redis socket path to pass to the client library. Host and port will be ignored if the path is set.
+    default: 6379
   db:
     name: Database
     notes: Redis database ID to pass to the client library.
@@ -27,20 +31,28 @@ class RedisMonitor < Scout::Plugin
   MEGABYTE = 1048576
 
   def build_report
-    redis = Redis.new :port     => option(:client_port),
-                      :db       => option(:db),
-                      :password => option(:password),
-                      :host     => option(:client_host)
+    if option(:client_path)
+      redis = Redis.new :path     => option(:client_path),
+                        :db       => option(:db),
+                        :password => option(:password)
+    else
+      redis = Redis.new :port     => option(:client_port),
+                        :db       => option(:db),
+                        :password => option(:password),
+                        :host     => option(:client_host)
+    end
+
     begin
       info = redis.info
 
       report(:uptime_in_hours   => info['uptime_in_seconds'].to_f / 60 / 60)
       report(:used_memory_in_mb => info['used_memory'].to_i / MEGABYTE)
       report(:used_memory_in_kb => info['used_memory'].to_i / KILOBYTE)
-      report(:hits => info['keyspace_hits'].to_i)
-      report(:misses => info['keyspace_misses'].to_i)
       report(:role              => info['role'])
       report(:up =>1)
+
+      counter(:hits_per_sec, info['keyspace_hits'].to_i, :per => :second)
+      counter(:misses_per_sec, info['keyspace_misses'].to_i, :per => :second)
 
       counter(:connections_per_sec, info['total_connections_received'].to_i, :per => :second)
       counter(:commands_per_sec,    info['total_commands_processed'].to_i,   :per => :second)
@@ -50,10 +62,10 @@ class RedisMonitor < Scout::Plugin
                              when 'up' then 1
                              when 'down' then 0
                              end
-        report(:master_link_status => master_link_status) 
+        report(:master_link_status => master_link_status)
         report(:master_last_io_seconds_ago => info['master_last_io_seconds_ago'])
         report(:master_sync_in_progress => info['master_sync_in_progress'])
-      end 
+      end
 
       # General Stats
       %w(changes_since_last_save connected_clients connected_slaves bgsave_in_progress).each do |key|
