@@ -37,6 +37,7 @@ class MongoOverview < Scout::Plugin
     
     # Connect to the database
     @admin_db = connection.db('admin')
+    @admin_db.authenticate(@username,@password) unless @username.nil?
     get_replica_set_status
   end
   
