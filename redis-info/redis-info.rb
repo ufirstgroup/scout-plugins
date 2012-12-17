@@ -1,19 +1,20 @@
 class RedisMonitor < Scout::Plugin
   needs 'redis', 'yaml'
+  
+  attr_accessor :socket
 
   OPTIONS = <<-EOS
   client_host:
     name: Host
-    notes: "Redis hostname (or IP address) to pass to the client library, ie where redis is running."
+    notes: "Redis hostname (or IP address) to pass to the client library, ie where redis is running. This will be ignored if the Unix socket path is provided."
     default: localhost
   client_port:
     name: Port
-    notes: Redis port to pass to the client library.
+    notes: Redis port to pass to the client library. This will be ignored if the Unix socket path is provided.
     default: 6379
   client_path:
     name: Unix socket path
-    notes: Redis socket path to pass to the client library. Host and port will be ignored if the path is set.
-    default: 6379
+    notes: Redis socket path to pass to the client library (ex: /tmp/redis.sock). Host and port will be ignored if provided.
   db:
     name: Database
     notes: Redis database ID to pass to the client library.
@@ -31,7 +32,8 @@ class RedisMonitor < Scout::Plugin
   MEGABYTE = 1048576
 
   def build_report
-    if option(:client_path)
+    if option(:client_path) and option(:client_path).length > 0
+      self.socket = true
       redis = Redis.new :path     => option(:client_path),
                         :db       => option(:db),
                         :password => option(:password)
@@ -82,6 +84,6 @@ class RedisMonitor < Scout::Plugin
   rescue Exception=> e
     report(:up =>0)
     return error( "Could not connect to Redis.",
-                  "#{e.message} \n\nMake certain you've specified correct port, DB and password, and that Redis is accepting connections." )
+                  "#{e.message} \n\nMake certain you've specified the correct #{self.socket ? 'Unix socket path' : 'host and port'}, DB and password, and that Redis is accepting connections." )
   end
 end
