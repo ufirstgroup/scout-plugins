@@ -17,6 +17,5 @@ class RedisMonitorTest < Test::Unit::TestCase
     assert error = res[:errors].first
     assert error[:body].include?("/tmp/redis.sock")
     assert error[:body].include?("correct Unix socket path")
-    
   end
 end
