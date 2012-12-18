@@ -14,7 +14,7 @@ class RedisMonitor < Scout::Plugin
     default: 6379
   client_path:
     name: Unix socket path
-    notes: Redis socket path to pass to the client library (ex: /tmp/redis.sock). Host and port will be ignored if provided.
+    notes: "Redis socket path to pass to the client library (ex: /tmp/redis.sock). Host and port will be ignored if provided."
   db:
     name: Database
     notes: Redis database ID to pass to the client library.
