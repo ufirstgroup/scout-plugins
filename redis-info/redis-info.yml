@@ -8,7 +8,7 @@ metadata:
     units: MB
     larger_is_better: 0
     precision: 0
-    label: Used Memory (MB)
+    label: Used Memory
   connections_per_sec:
     units: conn/sec
     larger_is_better: 0
