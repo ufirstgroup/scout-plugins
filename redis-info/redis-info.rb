@@ -49,7 +49,6 @@ class RedisMonitor < Scout::Plugin
 
       report(:uptime_in_hours   => info['uptime_in_seconds'].to_f / 60 / 60)
       report(:used_memory_in_mb => info['used_memory'].to_i / MEGABYTE)
-      report(:used_memory_in_kb => info['used_memory'].to_i / KILOBYTE)
       report(:role              => info['role'])
       report(:up =>1)
 

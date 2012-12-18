@@ -9,11 +9,6 @@ metadata:
     larger_is_better: 0
     precision: 0
     label: Used Memory (MB)
-  used_memory_in_kb:
-    units: KB
-    larger_is_better: 0
-    precision: 0
-    label: Used Memory (KB)
   connections_per_sec:
     units: conn/sec
     larger_is_better: 0
