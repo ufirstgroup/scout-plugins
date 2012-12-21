@@ -258,7 +258,7 @@ module CloudWatch
     #
     def to_s
       res = ""
-      @structure.each do |line|
+      @structure.lines.each do |line|
         line.each do |k,v|
           res << "#{k}: #{v}\t"
         end
