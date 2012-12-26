@@ -11,6 +11,10 @@ class LogWatcher < Scout::Plugin
   grep_options:
     name: Grep Options
     notes: Provide any options to pass to grep when running. For example, to count non-matching lines, enter 'v'. Use the abbreviated format ('v' and not 'invert-match').
+  send_error_if_no_log:
+    attributes: advanced
+    default: 1
+    notes: 1=yes
   EOS
   
   def init
@@ -22,7 +26,8 @@ class LogWatcher < Scout::Plugin
     `test -e #{@log_file_path}`
     
     unless $?.success?
-      return error("Could not find the log file", "The log file could not be found at: #{@log_file_path}. Please ensure the full path is correct.")
+      error("Could not find the log file", "The log file could not be found at: #{@log_file_path}. Please ensure the full path is correct.") if option("send_error_if_no_log") == "1"
+      return
     end
 
     @term = option("term").to_s.strip
