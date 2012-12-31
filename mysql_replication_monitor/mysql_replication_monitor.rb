@@ -42,8 +42,7 @@ class MysqlReplicationMonitor < Scout::Plugin
         error("Replication not configured")
       elsif h["Seconds_Behind_Master"].nil? and !down_at
         unless in_ignore_window?
-          alert("Replication not running",
-          "IO Slave: #{h["Slave_IO_Running"]}\nSQL Slave: #{h["Slave_SQL_Running"]}") 
+          alert("Replication not running", alert_body(h)) 
           down_at = Time.now
         end
       elsif h["Slave_IO_Running"] == "Yes" and h["Slave_SQL_Running"] == "Yes"
@@ -53,12 +52,11 @@ class MysqlReplicationMonitor < Scout::Plugin
         end
       elsif !down_at
         unless in_ignore_window?
-          alert("Replication not running",
-          "IO Slave: #{h["Slave_IO_Running"]}\nSQL Slave: #{h["Slave_SQL_Running"]}") 
+          alert("Replication not running", alert_body(h)) 
           down_at = Time.now
         end
       end
-      report("Seconds Behind Master"=>h["Seconds_Behind_Master"]) if h && h["Seconds_Behind_Master"]
+      report("Seconds Behind Master" => h["Seconds_Behind_Master"]) if h && h["Seconds_Behind_Master"]
       remember(:down_at, down_at)
     rescue Mysql::Error => e
       error("Unable to connect to MySQL", e.to_s)
@@ -78,6 +76,15 @@ class MysqlReplicationMonitor < Scout::Plugin
     else
       false
     end
+  end
+
+  def alert_body(h)
+    """
+IO Slave Running: #{h["Slave_IO_Running"]}
+Last IO Error: #{h["Last_IO_Error"]}
+SQL Slave Running: #{h["Slave_SQL_Running"]}
+Last SQL Error: #{h["Last_SQL_Error"]}
+"""
   end
 
 end
