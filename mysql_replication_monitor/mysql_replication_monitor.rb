@@ -35,8 +35,8 @@ class MysqlReplicationMonitor < Scout::Plugin
 
   def build_report
     begin
-      self.connection=Mysql.new(option(:host),option(:username),option(:password),nil,option(:port).to_i)
-      h=connection.query("show slave status").fetch_hash
+      self.connection = Mysql.new(option(:host), option(:username), option(:password), nil, option(:port).to_i)
+      h = connection.query("show slave status").fetch_hash
       down_at = memory(:down_at)
       if h.nil?
         error("Replication not configured")
@@ -59,21 +59,21 @@ class MysqlReplicationMonitor < Scout::Plugin
         end
       end
       report("Seconds Behind Master"=>h["Seconds_Behind_Master"]) if h && h["Seconds_Behind_Master"]
-      remember(:down_at,down_at)
-    rescue Mysql::Error=>e
-      error("Unable to connect to MySQL",e.to_s)
+      remember(:down_at, down_at)
+    rescue Mysql::Error => e
+      error("Unable to connect to MySQL", e.to_s)
     end
   end
 
   def in_ignore_window?
-    if s=option(:ignore_window_start) && e=option(:ignore_window_end)
+    if s = option(:ignore_window_start) && e = option(:ignore_window_end)
       start_time = Time.parse("#{Date.today} #{s}")
       end_time = Time.parse("#{Date.today} #{e}")
 
-      if start_time<end_time
-        return(Time.now > start_time and Time.now < end_time)
+      if start_time < end_time
+        return (Time.now > start_time and Time.now < end_time)
       else
-        return(Time.now > start_time or Time.now < end_time)
+        return (Time.now > start_time or Time.now < end_time)
       end
     else
       false
