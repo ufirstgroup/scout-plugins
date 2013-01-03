@@ -81,8 +81,15 @@ class MysqlReplicationMonitor < Scout::Plugin
   def alert_body(h)
     """
 IO Slave Running: #{h["Slave_IO_Running"]}
-Last IO Error: #{h["Last_IO_Error"]}
 SQL Slave Running: #{h["Slave_SQL_Running"]}
+
+Last Errno: #{h["Last_Errno"]}
+Last Error: #{h["Last_Error"]}
+
+Last IO Errno: #{h["Last_IO_Errno"]}
+Last IO Error: #{h["Last_IO_Error"]}
+
+Last_SQL_Errno: #{h["Last_SQL_Errno"]}
 Last SQL Error: #{h["Last_SQL_Error"]}
 """
   end
