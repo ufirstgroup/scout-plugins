@@ -19,18 +19,17 @@ class PHPFpmStatus < Scout::Plugin
                 :idle_processes       => stats["idle processes"].to_i,
                 :active_processes     => stats["active processes"].to_i,
                 :total_processes      => stats["total processes"].to_i,
-                :accepted_conn        => stats["accepted conn"].to_i,
+                :accepted_connections => stats["accepted conn"].to_i,
                 :listen_queue         => stats["listen queue"].to_i,
-                :listen_queue_len     => stats["listen queue len"].to_i,
+                :listen_queue_length  => stats["listen queue len"].to_i,
                 :max_active_processes => stats["max active processes"].to_i,
                 :max_children_reached => stats["max children reached"].to_i
                 })
         end
     rescue StandardError => trouble
-      report({
-            :is_up => 0,
-            :message => "#{trouble} #{trouble.backtrace}"
-            })
+      report({:is_up => 0})
+      error("Unable to connect to status page",
+            "#{trouble}\n\n#{trouble.backtrace}")
     end     
   end
 end

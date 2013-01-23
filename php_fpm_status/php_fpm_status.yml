@@ -1,0 +1,25 @@
+metadata: 
+  max_children_reached: 
+    precision: 0
+  accepted_connections: 
+    precision: 0
+  total_processes: 
+    precision: 0
+    label: "Proccesses (Total)"
+  active_processes: 
+    precision: 0
+    label: "Proccesses (Active)"
+  listen_queue_length: 
+    precision: 0
+  idle_processes:
+    precision: 0
+    label: "Proccesses (Idle)"
+  listen_queue:
+    precision: 0
+  max_active_processes:
+    precision: 0
+    label: "Proccesses (Max Active)"
+  start_since:
+    precision: 0
+  is_up:
+    precision: 0
