@@ -28,8 +28,6 @@ class RaidMonitoring < Scout::Plugin
 
       result = `perl #{nagios_check_raid_file}`.strip
 
-      summary( :command => "check_raid", :output => "<pre style='font-size:smaller'>"+result+"</pre>" )
-
       if result =~ /^OK:/
         report(:status => 0)
       elsif result =~ /^WARNING:/
