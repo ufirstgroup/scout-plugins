@@ -15,7 +15,8 @@ class SimplePortCheck < Scout::Plugin
     port_status=ports.map{|port| is_port_open?(port)} # true=open, false=closed
 
     num_ports=ports.size
-    num_ports_open = port_status.count{|status| status}
+    num_ports_open = port_status.find_all {|status| status == true}.size
+    
 
     previous_num_ports=memory(:num_ports)
     previous_num_ports_open=memory(:num_ports_open)
