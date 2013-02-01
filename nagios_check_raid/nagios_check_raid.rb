@@ -1,4 +1,4 @@
-class RaidMonitoring < Scout::Plugin
+class NagiosCheckRaid < Scout::Plugin
 
   OPTIONS=<<-EOS
   nagios_check_raid_file:
