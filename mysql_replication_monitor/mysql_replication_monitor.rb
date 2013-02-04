@@ -93,5 +93,4 @@ Last_SQL_Errno: #{h["Last_SQL_Errno"]}
 Last SQL Error: #{h["Last_SQL_Error"]}
 """
   end
-
 end
