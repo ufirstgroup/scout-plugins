@@ -7,7 +7,6 @@ class SimplePortCheck < Scout::Plugin
   OPTIONS=<<-EOS
     ports:
       notes: "comma-delimited list of 'host:ports' to monitor. Example: yahoo.com:80,google.com:443"
-      default: "localhost:80,google.com:443,yahoo.com:80"
     retries:
       notes: "Number of retries per host/port you want to perform in the event of a closed port."
       default: 0
@@ -17,7 +16,8 @@ class SimplePortCheck < Scout::Plugin
   EOS
 
   def build_report
-    ports        = option(:ports).split(/[ ,]+/).uniq
+    ports        = (option(:ports) || '').split(/[ ,]+/).uniq
+    return error("No ports are being checked","Specify the hosts and ports you'd like to check via the plugin settings.") if ports.empty?
     retries      = option(:retries).to_i
     sleep_time   = option(:sleep).to_i
     port_status  = ports.map{|port| is_port_open?(port, retries, sleep_time)} # true=open, false=closed
