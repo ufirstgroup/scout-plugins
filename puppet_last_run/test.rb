@@ -8,14 +8,14 @@ class PuppetLastRunTest < Test::Unit::TestCase
   end
   
   def test_with_recent_runs
-    plugin=PuppetLastRun.new(nil,{},{:recent_runs_file => File.expand_path('../fixtures/recent_runs.yaml', __FILE__)})
+    plugin=PuppetLastRun.new(nil,{},{:data_file => File.expand_path('../fixtures/recent_runs.yaml', __FILE__)})
     result = plugin.run
     report = result[:reports].first
     assert_equal 1, report[:success]
   end
   
   def test_with_last_run_summary
-    plugin=PuppetLastRun.new(nil,{},{:recent_runs_file => File.expand_path('../fixtures/last_run_summary.yaml', __FILE__)})
+    plugin=PuppetLastRun.new(nil,{},{:data_file => File.expand_path('../fixtures/last_run_summary.yaml', __FILE__)})
     result = plugin.run
     reports = result[:reports].first
     assert_equal 5, reports.size

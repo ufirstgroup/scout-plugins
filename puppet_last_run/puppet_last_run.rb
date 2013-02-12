@@ -10,7 +10,7 @@ EOS
   DEFAULT_RECENT_RUNS_FILE="/var/lib/puppet/state/recent_runs.yaml"
 
   def build_report
-    recent_runs_file = option(:recent_runs_file) || DEFAULT_RECENT_RUNS_FILE
+    recent_runs_file = option(:data_file) || DEFAULT_RECENT_RUNS_FILE
 
     if File.exist?(recent_runs_file)
       actual_last_run_time = File.mtime(recent_runs_file)
