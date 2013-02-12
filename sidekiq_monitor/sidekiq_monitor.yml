@@ -1,0 +1,24 @@
+metadata: 
+  failed:
+    label: Failed
+    precision: "0"
+  processed_per_minute:
+    label: Processed Rate
+    units: /min
+    precision: "1"
+  failed_per_minute:
+    label: Failed Rate
+    units: /min
+    precision: "1"
+  enqueued_per_minute:
+    label: Enqueued Rate
+    units: /min
+    precision: "1"
+  processed:
+    label: Processed
+    units: ""
+    precision: "0"
+  enqueued:
+    label: Enqueued
+    units: ""
+    precision: "0"
