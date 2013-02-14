@@ -24,4 +24,10 @@ class PuppetLastRunTest < Test::Unit::TestCase
     end
   end
   
+  def test_without_recent_runs_file
+    plugin=PuppetLastRun.new(nil,{},{})
+    result = plugin.run
+    assert result[:errors].any?
+  end
+  
 end

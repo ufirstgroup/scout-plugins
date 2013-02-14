@@ -3,12 +3,12 @@ class PuppetLastRun < Scout::Plugin
 
 OPTIONS=<<-EOS
   recent_runs_file:
-    label: Data File
+    label: Run File
     default: /var/lib/puppet/state/last_run_summary.yaml
     notes: "Either the path to a last_run_summary.yaml file or the recent_runs.yaml file (prior versions)."
 EOS
 
-  DEFAULT_RECENT_RUNS_FILE="/var/lib/puppet/state/recent_runs.yaml"
+  DEFAULT_RECENT_RUNS_FILE="/var/lib/puppet/state/last_run_summary.yaml"
 
   def build_report
     recent_runs_file = option(:recent_runs_file) || DEFAULT_RECENT_RUNS_FILE
@@ -23,7 +23,7 @@ EOS
 
       read_file(recent_runs_file)
     else
-      error("Puppet run file does not exist")
+      error("Puppet run file does not exist", "The Puppet run file [#{recent_runs_file}] does not exist.")
     end
   end
   
