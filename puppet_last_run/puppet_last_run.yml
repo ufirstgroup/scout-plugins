@@ -1,0 +1,19 @@
+metadata:
+  minutes_since_last_run:
+    label: Minutes since last run
+    precision: "1"
+  events_failure:
+    label: "Events (failure)"
+    precision: "0"
+  resources_failure:
+    label: "Resources (failure)"
+    precision: "0"
+  changes_total:
+    label: "Changes"
+    precision: "0"
+  events_total:
+    label: "Events (total)"
+    precision: "0"
+  resources_total:
+    label: "Resources (total)"
+    precision: "0"
