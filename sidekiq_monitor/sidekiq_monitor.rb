@@ -1,3 +1,4 @@
+$VERBOSE=false
 class SidekiqMonitor < Scout::Plugin
   needs 'redis', 'sidekiq'
 
