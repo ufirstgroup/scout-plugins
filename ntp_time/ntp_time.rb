@@ -23,10 +23,8 @@ EOS
         :transmit_timestamp  => response.transmit_timestamp.to_f,
         :offset              => offset.to_f
       )
-
-    rescue Exception => e
-      error("Unable to connect to NTP server (#{host})")
-      return
+    rescue SocketError => e
+      error("Unable to connect to NTP server (#{host})", e.message)
     end
   end
 end
