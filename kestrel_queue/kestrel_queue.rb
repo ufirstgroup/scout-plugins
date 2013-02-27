@@ -21,6 +21,12 @@ class KestrelQueueMonitor < Scout::Plugin
   needs 'json'
 
   def build_report
+    if option(:queue).nil?
+      return error("Queue name not provided","Provide the name of the queue you wish to monitor in the plugin settings.")
+    elsif gauge_stat(:items).nil? # sanity check - ensure it isn't nil. indication that the queue couldn't be found.
+      return error("Queue Not Found: #{option(:queue)}","The queue with name [#{option(:queue)}] could not be found.\n\nCheck to ensure the queue name is correct.")
+    end
+    
     report :items => gauge_stat(:items), :open_transactions => gauge_stat(:open_transactions),
       :mem_items => gauge_stat(:mem_items), :age => gauge_stat(:age_msec).to_f / 1000,
       :waiters => gauge_stat(:waiters)
