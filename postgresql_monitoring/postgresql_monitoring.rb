@@ -1,4 +1,4 @@
-class PostgresqlMonitoring< Scout::Plugin
+class PostgresqlMonitoring < Scout::Plugin
   # need the ruby-pg gem
   needs 'pg'
   
