@@ -7,9 +7,6 @@ class MongoOverview < Scout::Plugin
       name: Rails Environment
       default: production
       notes: "If a database.yml exists, specify the Rails environment that should be used. If you aren't using a database.yml file, you can enter the settings manually by clicking on the 'show advanced options' link below."
-    database:
-      name: Mongo Database
-      notes: Name of the MongoDB database to profile
     host:
       name: Mongo Server
       notes: Where mongodb is running. If a database.yml file is used, the yml settings will override this.
@@ -69,30 +66,18 @@ class MongoOverview < Scout::Plugin
     end
     
     # Try to connect to the database
-    @db = connection.db(@database)
     @admin_db = connection.db('admin')
     begin 
-      @db.authenticate(@username,@password) unless @username.nil?
+      @admin_db.authenticate(@username,@password) unless @username.nil?
     rescue Mongo::AuthenticationError
-      return error("Unable to authenticate to MongoDB Database.",$!.message)
+      return error("Unable to authenticate to MongoDB Admin Database.",$!.message)
     end
     
-    get_stats
     get_server_status
   end
   
-  def get_stats
-    stats = @db.stats
-
-    report(:objects      => stats['objects'])
-    report(:data_size    => stats['dataSize'])
-    report(:storage_size => stats['storageSize'])
-    report(:indexes      => stats['indexes'])
-    report(:index_size   => stats['indexSize'])
-  end
-  
   def get_server_status
-    stats = @db.command('serverStatus' => 1)
+    stats = @admin_db.command('serverStatus' => 1)
     
     if stats['indexCounters'] and stats['indexCounters']['btree']
       counter(:btree_accesses, stats['indexCounters']['btree']['accesses'], :per => :second)
