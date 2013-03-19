@@ -1,4 +1,4 @@
-class PostgresqlMonitoring< Scout::Plugin
+class PostgresqlMonitoring < Scout::Plugin
   # need the ruby-pg gem
   needs 'pg'
   
@@ -29,7 +29,6 @@ class PostgresqlMonitoring< Scout::Plugin
   NON_COUNTER_ENTRIES = ["numbackends"]
   
   def build_report
-    now = Time.now
     report = {}
     
     begin

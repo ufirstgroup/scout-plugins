@@ -25,7 +25,7 @@ class ElasticsearchClusterStatus < Scout::Plugin
     base_url = "#{option(:elasticsearch_host)}:#{option(:elasticsearch_port)}/_cluster/health"
     response = JSON.parse(Net::HTTP.get(URI.parse(base_url)))
 
-    report(:status => response['status'])
+    report(:status => status(response['status']))
     report(:number_of_nodes => response['number_of_nodes'])
     report(:number_of_data_nodes => response['number_of_data_nodes'])
     report(:active_primary_shards => response['active_primary_shards'])
@@ -46,6 +46,19 @@ class ElasticsearchClusterStatus < Scout::Plugin
     error("Hostname is invalid", "Please ensure the elasticsearch Host is correct - the host could not be found. Current URL: \n\n#{base_url}")
   rescue Errno::ECONNREFUSED
     error("Unable to connect", "Please ensure the host and port are correct. Current URL: \n\n#{base_url}")
+  end
+  
+  # Generates a status string like "2 (green)" so triggers can be run off the status.
+  def status(color)
+    code = case color
+    when 'green'
+      2
+    when 'yellow'
+      1
+    when 'red'
+      0
+    end
+    "#{code} (#{color})"
   end
 
 end
