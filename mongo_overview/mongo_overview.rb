@@ -1,3 +1,4 @@
+$VERBOSE=false
 class MongoOverview < Scout::Plugin
   OPTIONS=<<-EOS
     path_to_db_yml:
@@ -32,11 +33,10 @@ class MongoOverview < Scout::Plugin
     if option('path_to_db_yml').nil?
       @db_yml = false
       # check if options provided
-      @database = option('database')
       @host     = option('host') 
       @port     = option('port')
-      if [@database,@host,@port].compact.size < 3
-        return error("Connection settings not provided.", "Either the full path to the MongoDB database file (ie - /var/www/apps/APP_NAME/current/config/database.yml) or the database name, host, and port must be provided in the advanced settings.")
+      if [@host,@port].compact.size < 2
+        return error("Connection settings not provided.", "Either the full path to the MongoDB database file (ie - /var/www/apps/APP_NAME/current/config/database.yml) or the host and port must be provided in the advanced settings.")
       end
       @username = option('username')
       @password = option('password')
