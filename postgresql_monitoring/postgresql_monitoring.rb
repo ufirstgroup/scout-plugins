@@ -29,7 +29,6 @@ class PostgresqlMonitoring < Scout::Plugin
   NON_COUNTER_ENTRIES = ["numbackends"]
   
   def build_report
-    now = Time.now
     report = {}
     
     begin
