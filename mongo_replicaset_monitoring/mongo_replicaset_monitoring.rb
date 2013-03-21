@@ -1,3 +1,4 @@
+$VERBOSE=false
 class MongoOverview < Scout::Plugin
   OPTIONS=<<-EOS
     host:
