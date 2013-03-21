@@ -1,31 +1,32 @@
 class MongoDatabaseStats < Scout::Plugin
   OPTIONS=<<-EOS
-    path_to_db_yml:
-      name: Path to database.yml
-      notes: "If a database.yml file exists with MongoDB connection information, provide the full path here. Otherwise, you can enter the settings manually by clicking on the 'show advanced options' link below."
-    rails_env:
-      name: Rails Environment
-      default: production
-      notes: "If a database.yml exists, specify the Rails environment that should be used. If you aren't using a database.yml file, you can enter the settings manually by clicking on the 'show advanced options' link below."
+    username:
+      notes: Leave blank unless you have authentication enabled.
+    password:
+      notes: Leave blank unless you have authentication enabled.
+      attributes: password
     database:
       name: Mongo Database
-      notes: Name of the MongoDB database to profile
+      notes: Name of the MongoDB database to profile.
     host:
       name: Mongo Server
-      notes: Where mongodb is running. If a database.yml file is used, the yml settings will override this.
+      notes: Where mongodb is running.
       default: localhost
       attributes: advanced
-    username:
-      notes: Leave blank unless you have authentication enabled. If a database.yml file is used, the yml settings will override this.
-      attributes: advanced
-    password:
-      notes: Leave blank unless you have authentication enabled. If a database.yml file is used, the yml settings will override this.
-      attributes: advanced,password
     port:
       name: Port
       default: 27017
-      notes: MongoDB standard port is 27017. If a database.yml file is used, the yml settings will override this.
+      notes: MongoDB standard port is 27017.
       attributes: advanced
+    path_to_db_yml:
+      name: Path to database.yml
+      notes: "If a database.yml file exists with MongoDB connection information, provide the full path here. This will override other settings if provided."
+      attributes: advanced
+    rails_env:
+      name: Rails Environment
+      default: production
+      attributes: advanced
+      notes: "If a database.yml exists, specify the Rails environment that should be used."
   EOS
 
   needs 'mongo', 'yaml'
