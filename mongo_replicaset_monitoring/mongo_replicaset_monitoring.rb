@@ -1,5 +1,5 @@
 $VERBOSE=false
-class MongoOverview < Scout::Plugin
+class MongoReplicaSetMonitoring < Scout::Plugin
   OPTIONS=<<-EOS
     host:
       name: Mongo Server
