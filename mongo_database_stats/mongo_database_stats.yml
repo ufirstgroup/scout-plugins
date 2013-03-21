@@ -4,15 +4,15 @@ metadata:
     label: Indexes
   index_size: 
     units: MB
-    precision: "0"
+    precision: "2"
     label: Size of Index
   storage_size: 
     units: MB
-    precision: "0"
+    precision: "2"
     label: Size of Storage
   data_size: 
     units: MB
-    precision: "0"
+    precision: "2"
     label: Size of Data
   objects: 
     units: ""
