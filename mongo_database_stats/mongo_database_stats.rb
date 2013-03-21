@@ -83,10 +83,14 @@ class MongoDatabaseStats < Scout::Plugin
     stats = @db.stats
 
     report(:objects      => stats['objects'])
-    report(:data_size    => stats['dataSize'])
-    report(:storage_size => stats['storageSize'])
+    report(:data_size    => as_mb(stats['dataSize']))
+    report(:storage_size => as_mb(stats['storageSize']))
     report(:indexes      => stats['indexes'])
-    report(:index_size   => stats['indexSize'])
+    report(:index_size   => as_mb(stats['indexSize']))
+  end
+  
+  def as_mb(metric)
+    metric/(1024*1024).to_f
   end
 
 end
