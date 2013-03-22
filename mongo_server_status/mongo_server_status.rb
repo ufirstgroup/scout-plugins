@@ -1,3 +1,4 @@
+$VERBOSE=false
 class MongoServerStatus < Scout::Plugin
   OPTIONS=<<-EOS
     path_to_db_yml:

@@ -1,3 +1,4 @@
+$VERBOSE=false
 class MongoDatabaseStats < Scout::Plugin
   OPTIONS=<<-EOS
     username:
