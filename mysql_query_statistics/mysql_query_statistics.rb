@@ -50,7 +50,7 @@ class MysqlQueryStatistics < Scout::Plugin
     counter(:total, total, :per => :second)
   rescue Exception => e
     if e.message =~ /command not found|No such/
-      error("MySQL Command not found","mysql may not be in Cron's PATH as the mysql command was not found at #{@mysql_command}. Try using the full path to mysql: #{`which mysql`}.\n\nError Message: #{e.message}")
+      error("MySQL Command not found","The mysql executable may not be in Cron's PATH as the mysql command was not found via \"#{@mysql_command}\". Try using the full path to mysql.\n\nError Message: #{e.message}")
     else
       raise
     end
