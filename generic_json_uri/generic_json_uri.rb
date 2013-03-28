@@ -1,16 +1,14 @@
 class GenericJsonUri < Scout::Plugin
   needs 'json', 'open-uri'
-  require 'json'
-  require 'open-uri'
   
   OPTIONS=<<-EOS
     url: 
       name: URL
-      notes: Full URL to the JSON end point you want to query.  Could be a path on the server.
+      notes: Full URL to a JSON end point you want to query. Can also be a local path to a file.
     username:
       notes: Username for basic http auth.
     password: 
-      notes: Password for the username.
+      notes: Password for basic http auth.
   EOS
   
   def build_report
