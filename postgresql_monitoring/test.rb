@@ -8,7 +8,7 @@ class PostgresqlMonitoringTest < Test::Unit::TestCase
   def setup
     @options=parse_defaults("postgresql_monitoring")
   end
-  
+  # TODO - tests broken after switch to PGConn block initialization. 
   # Simuates 2 runs of the plugin to check on counter behavior and reported data.
   def test_two_runs
     @plugin=PostgresqlMonitoring.new(nil,{},@options)
