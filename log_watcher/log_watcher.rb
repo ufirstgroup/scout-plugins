@@ -43,7 +43,7 @@ class LogWatcher < Scout::Plugin
     last_bytes = memory(:last_bytes) || 0
     current_length = `wc -c #{@log_file_path}`.split(' ')[0].to_i
     count = 0
-
+    elapsed_seconds = 0
     # don't run it the first time
     if (last_bytes > 0 )
       read_length = current_length - last_bytes
@@ -55,12 +55,13 @@ class LogWatcher < Scout::Plugin
         # will be read on the next run.
         count = `tail -c +#{last_bytes+1} #{@log_file_path} | head -c #{read_length} | grep "#{@term}" -#{option(:grep_options).to_s.gsub('-','')}c`.strip.to_f
         # convert to a rate / min
-        count = count / ((Time.now - @last_run)/60)
+        elapsed_seconds = Time.now - @last_run
+        count = count / (elapsed_seconds/60)
       else
         count = nil
       end
     end
-    report(:occurances => count) if count
+    report(:occurances => count) if count and elapsed_seconds >= 1
     remember(:last_bytes, current_length)
   end
 end
