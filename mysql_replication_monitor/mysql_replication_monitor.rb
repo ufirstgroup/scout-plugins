@@ -21,6 +21,9 @@ class MysqlReplicationMonitor < Scout::Plugin
     notes: The password for the mysql user
     default:
     attributes: password
+  socket:
+    name: MySQL socket
+    notes: Specify the location of the MySQL socket
   ignore_window_start:
     name: Ignore Window Start
     notes: Time to start ignoring replication failures. Useful for disabling replication for backups. For Example, 7:00pm
@@ -36,7 +39,7 @@ class MysqlReplicationMonitor < Scout::Plugin
   def build_report
     res={"Seconds Behind Master" => -1, "Replication Running"=>0}
     begin
-      self.connection=Mysql.new(option(:host),option(:username),option(:password),nil,option(:port).to_i)
+      self.connection=Mysql.new(option(:host),option(:username),option(:password),nil,(option(:port).nil? ? nil : option(:port).to_i),option(:socket))
       h=connection.query("show slave status").fetch_hash
       down_at = memory(:down_at)
       if h.nil?
