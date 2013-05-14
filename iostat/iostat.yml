@@ -22,5 +22,5 @@ metadata:
     precision: 0
     units: %
   aveq:
-    label: Average Queue Size
+    label: "# of I/Os in progress"
     precision: 1
