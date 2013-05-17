@@ -24,3 +24,4 @@ metadata:
   aveq:
     label: "# of I/Os in progress"
     precision: 1
+    units: "/sec"
