@@ -33,6 +33,11 @@ class ZookeeperMonitor < Scout::Plugin
       socket.print("srvr")
       stats = socket.read
 
+      if stats =~ /This ZooKeeper instance is not currently serving requests/i
+        error(:subject => "Zookeeper not servic requests", :body => stats)
+        return
+      end
+
       # Let's set the variables to the outputs, based on regexes
       stats.each_line do |line|
         # This line is smarter, thanks to Dan's regex-fu
