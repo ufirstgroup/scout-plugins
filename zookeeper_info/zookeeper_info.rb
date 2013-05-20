@@ -31,6 +31,7 @@ class ZookeeperMonitor < Scout::Plugin
       stats = socket.read
 
       if stats =~ /This ZooKeeper instance is not currently serving requests/i
+        report(:up => 0)
         error(:subject => "Zookeeper not servic requests", :body => stats)
         return
       end
@@ -54,7 +55,10 @@ class ZookeeperMonitor < Scout::Plugin
           report(name => val)
         end
       end
+
+      report(:up => 1)
     rescue Errno::ECONNREFUSED => e
+      report(:up => 0)
       error(:subject => 'Unable to connect to zookeeper', :body => "The zookeeper service is not running on the specified port (#{option(:port)}).\nFull error is:\n" + e)
     end
   end
