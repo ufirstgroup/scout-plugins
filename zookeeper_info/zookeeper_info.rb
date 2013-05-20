@@ -32,7 +32,7 @@ class ZookeeperMonitor < Scout::Plugin
 
       if stats =~ /This ZooKeeper instance is not currently serving requests/i
         report(:up => 0)
-        error(:subject => "Zookeeper not servic requests", :body => stats)
+        error(:subject => "Zookeeper not serving requests", :body => stats)
         return
       end
 
