@@ -3,7 +3,7 @@ class NagiosCheckRaid < Scout::Plugin
   OPTIONS=<<-EOS
   nagios_check_raid_file:
     name: Nagios check raid file
-    notes: File path of nagios check_raid. See: https://github.com/glensc/nagios-plugin-check_raid
+    notes: "File path of nagios check_raid. See: https://github.com/glensc/nagios-plugin-check_raid"
     default: /usr/lib/nagios/plugins/check_raid
   EOS
 
