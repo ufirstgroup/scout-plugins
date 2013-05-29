@@ -17,8 +17,8 @@ class Varnish < Scout::Plugin
       notes: Locations to find varnishstat if it's not on the path.
 
   EOS
-  
-  RATE = :minute # counter metrics are reported per-minute
+
+  RATE = :second # counter metrics are reported per-second
 
   def build_report
     stats = {}
