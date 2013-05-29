@@ -1,5 +1,5 @@
 metadata:
-  synchronized:
+  NSync:
     label: Synchronized?
     precision: 0
   polling_interval_in_seconds:
