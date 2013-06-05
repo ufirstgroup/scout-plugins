@@ -21,6 +21,7 @@ class CephPlugin < Scout::Plugin
       @status[:used] = @lines[3].match(/\s(\d*\s[A-Z]{2})\sused/)[1]
       @status[:available] = @lines[3].match(/\s(\d*\s[A-Z]{2})\s\//)[1]
       @status[:cluster_total_size] = @lines[3].match(/\s(\d*\s[A-Z]{2})\savail/)[1]
+      @status[:capacity] = "#{((@status[:used].to_f / @status[:cluster_total_size].to_f)*100).round(0)}%"
     end
   
     def cluster_ok?

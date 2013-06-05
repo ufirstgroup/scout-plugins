@@ -1,0 +1,24 @@
+metadata:
+  cluster_total_size:          
+    label: Cluster Size
+    units: GB
+    precision: 0
+  used:
+    label: Used
+    units: GB
+    precision: 0
+  available:
+    label: Available
+    units: GB
+    precision: 0
+    larger_is_better: true
+  capacity:
+    label: Capacity
+    units: %
+    precision: 0
+    larger_is_better: true
+
+triggers:
+  - type: peak
+    dname: capacity
+    max_value: 85
