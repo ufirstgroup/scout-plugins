@@ -2,7 +2,9 @@ class CephPlugin < Scout::Plugin
   
   class CephStatus
   
-    HEALTH_OK = "HEALTH_OK"
+    HEALTH_OK_STRING = "HEALTH_OK"
+    HEALTH_OK = 1
+    UNHEALTHY = 0
   
     def initialize(status)
       @status_text = status
@@ -12,16 +14,40 @@ class CephPlugin < Scout::Plugin
     def parse
       @lines = @status_text.split("\n").map { |line| line.strip }
       @status = {}
-      @status[:health] = @lines[0].split(' ')[1]
-      @status[:unhealthy_reason] = @lines[0].split(' ')[2..-1].join(' ') rescue nil
+      @ceph_health = @lines[0].split(' ')[1]
+      @status[:health] = @ceph_health==HEALTH_OK_STRING ? HEALTH_OK : UNHEALTHY
+      @unhealthy_reason = @lines[0].split(' ')[2..-1].join(' ') rescue nil
       @status[:num_osds] = @lines[2].match(/(\d*)\sosds:/)[1].to_i
       @status[:osds_up] = @lines[2].match(/(\d*)\sup/)[1].to_i
       @status[:osds_in] = @lines[2].match(/(\d*)\sin/)[1].to_i
-      @status[:data_size] = @lines[3].match(/\s(\d*\s[A-Z]{2})\sdata/)[1]
-      @status[:used] = @lines[3].match(/\s(\d*\s[A-Z]{2})\sused/)[1]
-      @status[:available] = @lines[3].match(/\s(\d*\s[A-Z]{2})\s\//)[1]
-      @status[:cluster_total_size] = @lines[3].match(/\s(\d*\s[A-Z]{2})\savail/)[1]
-      @status[:capacity] = "#{((@status[:used].to_f / @status[:cluster_total_size].to_f)*100).round(0)}%"
+      @status[:data_size] = clean_value(@lines[3].match(/\s(\d*\s[A-Z]{2})\sdata/)[1])
+      @status[:used] = clean_value(@lines[3].match(/\s(\d*\s[A-Z]{2})\sused/)[1])
+      @status[:available] = clean_value(@lines[3].match(/\s(\d*\s[A-Z]{2})\s\//)[1])
+      @status[:cluster_total_size] = clean_value(@lines[3].match(/\s(\d*\s[A-Z]{2})\savail/)[1])
+      @status[:capacity] = clean_value(((@status[:used].to_f / @status[:cluster_total_size].to_f)*100).round(1))
+    end
+    
+    def clean_value(value)
+      value = if value =~ /GB/i
+        value.to_f
+      elsif value =~ /MB/i
+        (value.to_f/1024.to_f)
+      elsif value =~ /KB/i
+        (value.to_f/1024.to_f/1024.to_f)
+      elsif value =~ /TB/i
+        (value.to_f*1024.to_f)
+      else
+        value.to_f
+      end
+      ("%.1f" % [value]).to_f
+    end
+    
+    def ceph_health
+      @ceph_health
+    end
+    
+    def unhealthy_reason
+      @unhealthy_reason
     end
   
     def cluster_ok?
@@ -43,13 +69,14 @@ class CephPlugin < Scout::Plugin
   end
   
   def new_ceph_status
-    CephStatus.new(`ceph -s`.chomp)
+    #CephStatus.new(`ceph -s`.chomp)
+    CephStatus.new(IO.binread(File.dirname(__FILE__)+'/fixtures/ceph_ok'))
   end
   
   def build_report
     ceph_status = new_ceph_status
     unless ceph_status.cluster_ok?
-      alert("Ceph is unhealthy", "current status: #{ceph_status.health} - #{ceph_status.unhealthy_reason}")
+      alert("Ceph is unhealthy", "current status: #{ceph_status.ceph_health} - #{ceph_status.unhealthy_reason}")
     end
     report(ceph_status.to_h)
   end
