@@ -69,8 +69,7 @@ class CephPlugin < Scout::Plugin
   end
   
   def new_ceph_status
-    #CephStatus.new(`ceph -s`.chomp)
-    CephStatus.new(IO.binread(File.dirname(__FILE__)+'/fixtures/ceph_ok'))
+    CephStatus.new(`ceph -s`.chomp)
   end
   
   def build_report
