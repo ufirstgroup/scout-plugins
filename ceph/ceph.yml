@@ -42,3 +42,6 @@ triggers:
   - type: peak
     dname: capacity
     max_value: 85
+  - type: peak
+    dname: health
+    low_value: 0
