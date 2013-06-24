@@ -6,6 +6,8 @@ group :test do
   gem 'fakeweb'
   gem 'mocha'
   gem 'timecop'
+  gem 'pry'
+  gem 'pry-doc'
 end
 
 # plugin-specific
