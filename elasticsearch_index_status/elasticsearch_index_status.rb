@@ -33,9 +33,11 @@ class ElasticsearchIndexStatus < Scout::Plugin
       return error("No index found with the specified name", "No index could be found with the specified name.\n\nIndex Name: #{option(:index_name)}")
     end
 
-    report(:primary_size => b_to_mb(response['_all']['indices'][index_name]['primaries']['store']['size_in_bytes']) || 0)
-    report(:size => b_to_mb(response['_all']['indices'][index_name]['total']['store']['size_in_bytes']) || 0)
-    report(:num_docs => response['_all']['indices'][index_name]['primaries']['docs']['count'] || 0)
+    # support elasticsearch before and after formatting change
+    indices = (response['_all'] && response['_all']['indices']) || response['indices']
+    report(:primary_size => b_to_mb(indices[index_name]['primaries']['store']['size_in_bytes']) || 0)
+    report(:size => b_to_mb(indices[index_name]['total']['store']['size_in_bytes']) || 0)
+    report(:num_docs => indices[index_name]['primaries']['docs']['count'] || 0)
 
   rescue OpenURI::HTTPError
     error("Stats URL not found", "Please ensure the base url for elasticsearch index stats is correct. Current URL: \n\n#{base_url}")
