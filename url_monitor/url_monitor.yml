@@ -7,6 +7,5 @@ metadata:
     label: Url Reachable
     precision: 0
   status:
-    label: Status
-    units: response code
+    label: Response Code
     precision: 0
