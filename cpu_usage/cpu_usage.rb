@@ -6,6 +6,11 @@
 
 class CpuUsage < Scout::Plugin
   needs "time"
+  
+  # Raised by #CpuStats when an error reading /proc/stats.
+  class ProcStatError < Exception
+  end
+  
   def build_report
     stats = CpuStats.fetch
 
@@ -16,27 +21,29 @@ class CpuUsage < Scout::Plugin
     end
 
     remember(:cpu_stats => stats.to_h)
-  rescue Exception => e
-    error("Error running plugin: #{e.class}", e.message)
+  rescue ProcStatError => e
+    raise
+    error("Unable to read /proc/stat",e.message)
   end
 
   class CpuStats
-    attr_accessor :user, :system, :idle, :iowait, :interrupts, :procs_running, :procs_blocked, :time, :steal, :guest, :guest_nice
+    attr_accessor :user, :system, :idle, :iowait, :interrupts, :procs_running, :procs_blocked, :time, :steal
 
-    def self.fetch
-      data      = %x(cat /proc/stat).split(/\n/).collect { |line| line.split }
+    def self.fetch      
+      output = `cat /proc/stat 2>&1`
+      if $? and !$?.success?
+        raise ProcStatError, output
+      end
+      
+      data = output.split(/\n/).collect { |line| line.split }
+      
       cpu_stats = CpuStats.new
 
       if cpu = data.detect { |line| line[0] == 'cpu' }
         cpu_stats.user, nice, cpu_stats.system, cpu_stats.idle, cpu_stats.iowait,
-          hardirq, softirq, cpu_stats.steal, cpu_stats.guest, guest_nice = *cpu[1..-1].collect { |c| c.to_i }
-
+          hardirq, softirq, cpu_stats.steal = *cpu[1..-1].collect { |c| c.to_i }
         cpu_stats.user   += nice
         cpu_stats.system += hardirq + softirq
-
-        if cpu_stats.guest && guest_nice
-          cpu_stats.guest += guest_nice
-        end
       end
 
       if interrupts = data.detect { |line| line[0] == 'intr' }
@@ -86,11 +93,6 @@ class CpuUsage < Scout::Plugin
         div += diff_steal
       end
 
-      if guest && other.guest && guest > 0
-        diff_guest = guest - other.guest
-        div += diff_guest
-      end
-
       divo2 = div / 2
 
       results = {
@@ -104,10 +106,6 @@ class CpuUsage < Scout::Plugin
 
       if diff_steal && steal > 0
         results[:steal] = (100.0 * diff_steal + divo2) / div
-      end
-
-      if diff_guest && guest > 0
-        results[:guest] = (100.0 * diff_guest + divo2) / div
       end
 
       if self.time && other.time
@@ -124,7 +122,7 @@ class CpuUsage < Scout::Plugin
         :user => user, :system => system, :idle => idle, :iowait => iowait,
         :interrupts => interrupts, :procs_running => procs_running,
         :procs_blocked => procs_blocked, :time => Time.now.to_s,
-        :steal => steal, :guest => guest
+        :steal => steal
       }
     end
   end
