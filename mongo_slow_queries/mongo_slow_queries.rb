@@ -1,6 +1,7 @@
 $VERBOSE=false
 require "time"
 require "digest/md5"
+require "bson"
 
 # MongoDB Slow Queries Monitoring plug in for scout.
 # Created by Jacob Harris, based on the MySQL slow queries plugin
@@ -30,7 +31,7 @@ class ScoutMongoSlow < Scout::Plugin
       Notes: MongoDB standard port is 27017
       attributes: advanced
   EOS
-  
+
   # In order to limit the alert body size, only the first +MAX_QUERIES+ are listed in the alert body. 
   MAX_QUERIES = 10
 
@@ -40,15 +41,15 @@ class ScoutMongoSlow < Scout::Plugin
       db.profiling_level = :slow_only
     end
   end
-  
+
   def build_report
     database = option("database").to_s.strip
     server = option("server").to_s.strip
-    
+
     if server.empty?
       server ||= "localhost"
     end
-    
+
     if database.empty?
       return error( "A Mongo database name was not provided.",
                     "Slow query logging requires you to specify the database to profile." )
@@ -60,25 +61,25 @@ class ScoutMongoSlow < Scout::Plugin
     else
       threshold = threshold_str.to_i
     end
-            
-    db = Mongo::Connection.new(server, option("port").to_i,:slave_ok=>true).db(database)                 
+
+    db = Mongo::Connection.new(server, option("port").to_i,:slave_ok=>true).db(database)
     db.authenticate(option(:username), option(:password)) if !option(:username).to_s.empty?
     enable_profiling(db)
 
     slow_queries = []
     last_run = memory(:last_run) || Time.now
     current_time = Time.now
-    
+
     # info
     selector = { 'millis' => { '$gte' => threshold } }
     cursor = Mongo::Cursor.new(db[Mongo::DB::SYSTEM_PROFILE_COLLECTION], :selector => selector,:slave_ok=>true).limit(20).sort([["$natural", "descending"]])
-    
+
     # reads most recent first
     # {"ts"=>Wed Dec 16 02:44:03 UTC 2009, "info"=>"query twitter_follow.system.profile ntoreturn:0 reslen:1236 nscanned:8  \nquery: { query: { millis: { $gte: 5 } }, orderby: { $natural: -1 } }  nreturned:8 bytes:1220", "millis"=>57.0}
     cursor.each do |prof|
       ts = prof['ts']
       break if ts < last_run
-      
+
       slow_queries << prof
     end
 
@@ -86,7 +87,7 @@ class ScoutMongoSlow < Scout::Plugin
     elapsed_seconds = 1 if elapsed_seconds < 1
     # calculate per-second
     report(:slow_queries => slow_queries.size/(elapsed_seconds/60.to_f))
-    
+
     if slow_queries.any?
       alert(build_alert(slow_queries))
     end
@@ -100,9 +101,9 @@ class ScoutMongoSlow < Scout::Plugin
       return
     else
       raise error
-    end  
+    end
   end
-  
+
   def build_alert(slow_queries)
     subj = "Maximum Query Time exceeded on #{slow_queries.size} #{slow_queries.size > 1 ? 'queries' : 'query'}"
     # send a sampling of slow queries. the total # of queries + query is limited as scout will throwout large checkins.
@@ -114,6 +115,13 @@ class ScoutMongoSlow < Scout::Plugin
       queries << sq
     end
     {:subject => subj, :body => queries.to_json}
+  end
+
+  # Override Binary's to_json command - we were getting errors trying to serialize binaries as part of the slow query report
+  class BSON::Binary
+    def to_json(*args)
+      inspect
+    end
   end
 
 end
