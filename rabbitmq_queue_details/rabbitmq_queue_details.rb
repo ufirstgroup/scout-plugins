@@ -6,6 +6,7 @@
 class RabbitmqQueueDetails < Scout::Plugin
   needs 'json'
   needs 'net/http'
+  needs 'cgi'
 
   OPTIONS=<<-EOS
     management_url:
