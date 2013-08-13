@@ -28,9 +28,9 @@ class ProcessUsage < Scout::Plugin
     ps_regex     = (option(:ps_regex) || "(?i:\\bCOMMAND\\b)").to_s.gsub("COMMAND") { Regexp.escape(option(:command_name)) }
     alert_when_command_not_found = option(:alert_when_command_not_found).to_s != '0'
 
-    ps_output = `#{ps_command}`
+    ps_output = `#{ps_command} 2>&1`
     unless $?.success?
-      return error("Couldn't use `ps` as expected.", error.message)
+      return error("Couldn't use `ps` as expected.", ps_output)
     end
 
     ps_lines = ps_output.split(/\n/)
