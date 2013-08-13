@@ -48,7 +48,7 @@ class RabbitmqQueueDetails < Scout::Plugin
 
 
   def get_queue(vhost, queue)
-     url = "#{option('management_url').to_s.strip}/api/queues/#{vhost}/#{queue}/"
+     url = "#{option('management_url').to_s.strip}/api/queues/#{CGI::escape(vhost)}/#{queue}/"
      result = query_api(url)
   end
   
