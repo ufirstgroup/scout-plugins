@@ -3,8 +3,6 @@
 class MysqlQueryStatistics < Scout::Plugin
   ENTRIES = %w(Com_insert Com_select Com_update Com_delete)
 
-  require 'shellwords'
-
   OPTIONS=<<-EOS
   user:
     name: MySQL username
