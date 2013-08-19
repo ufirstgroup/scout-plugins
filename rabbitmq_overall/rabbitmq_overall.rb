@@ -27,7 +27,7 @@ class RabbitmqOverall < Scout::Plugin
            :connections => get('connections').length,
            :queues => get('queues').length,
            :queue_memory_used => nodes[0]["mem_used"].to_f / (1024 * 1024),
-           :messages => overview["queue_totals"]["messages"],
+           :messages => (overview["queue_totals"].any? ? overview["queue_totals"]["messages"] : 0),
            :exchanges => get('exchanges').length)
   rescue Errno::ECONNREFUSED
     error("Unable to connect to RabbitMQ Management server", "Please ensure the connection details are correct in the plugin settings.\n\nException: #{$!.message}\n\nBacktrace:\n#{$!.backtrace}")
