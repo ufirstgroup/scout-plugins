@@ -1,12 +1,15 @@
-class NFSThreadsFull < Scout::Plugin
+class NFSMonitoring < Scout::Plugin
 
-  class NFSThreadSamplingException
+  class NFSThreadSamplingException < StandardError
+  end
+  
+  class NFSConnectionsError < StandardError
   end
 
   def get_established_nfsd_connections
-    connections = `netstat -an | grep 2049 | grep -c ESTABLISHED`.strip
-    unless $?.success?
-      raise "Failed to get number of NFS network connections"
+    connections = `netstat -an | grep 2049 | grep -c ESTABLISHED 2>&1`.strip
+    if !$?.success? and connections != '0' # no grep matches will result in a failure. we just want this to be zero.
+      raise NFSConnectionsError, "Failed to get number of NFS network connections"
     end
     connections
   end
