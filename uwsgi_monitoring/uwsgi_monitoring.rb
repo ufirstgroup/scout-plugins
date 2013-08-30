@@ -1,4 +1,4 @@
-class SimplePlugin < Scout::Plugin
+class UWSGIMonitoring < Scout::Plugin
     needs 'json'
 
     OPTIONS=<<-EOS
@@ -21,17 +21,24 @@ class SimplePlugin < Scout::Plugin
 
         data['workers'].each { |worker| 
             total_requests += worker['requests']
-            total_avg_rt += worker['avg_rt']
-            total_rss += worker['rss']
-            total_vsz += worker['vsz']
+            total_avg_rt += worker['avg_rt'] # ms
+            total_rss += worker['rss'] # bytes
+            total_vsz += worker['vsz'] # bytes
         }
 
         counter(:requests_per_sec, total_requests, :per => :second)
         report(
             :workers => data['workers'].length,
-            :avg_rt => (total_avg_rt / data['workers'].length) / 1000, 
-            :rss => total_rss,
-            :vsz => total_vsz
+            :avg_rt => (total_avg_rt / data['workers'].length), 
+            :rss => to_mb(total_rss),
+            :vsz => to_mb(total_vsz)
         )
+      rescue Errno::ECONNREFUSED
+        error("Unable to connect to UWSGI","Unable to fetch stats as the connection to #{location} was refused. Please ensure the host and port are correct.")
+    end
+    
+    # Memory metrics are in bytes
+    def to_mb(bytes)
+      bytes.to_i / 1024 / 1024
     end
 end
