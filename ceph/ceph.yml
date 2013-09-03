@@ -22,7 +22,7 @@ metadata:
     precision: 1
   capacity:
     label: Capacity
-    units: %
+    units: "%"
     precision: 1
     larger_is_better: true
   num_osds:

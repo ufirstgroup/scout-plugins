@@ -20,7 +20,7 @@ metadata:
   util:
     label: Utilization
     precision: 0
-    units: %
+    units: "%"
   aveq:
     label: "# of I/Os in progress"
     precision: 1
