@@ -17,11 +17,11 @@ metadata:
     precision: 0
   cpu:
     label: CPU Usage (Largest Process)
-    units: %
+    units: "%"
     precision: 1
   total_cpu:
     label: CPU Usage (Total)
-    units: %
+    units: "%"
     precision: 1
      
 triggers:
