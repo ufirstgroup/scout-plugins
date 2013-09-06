@@ -1,0 +1,9 @@
+metadata:
+  memory:          
+    units: MB
+    precision: 0
+  containers:
+    precision: 0
+  cpu:
+    units: %
+    precision: 1
