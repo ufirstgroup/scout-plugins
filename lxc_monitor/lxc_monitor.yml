@@ -5,5 +5,5 @@ metadata:
   containers:
     precision: 0
   cpu:
-    units: %
+    units: '%'
     precision: 1
