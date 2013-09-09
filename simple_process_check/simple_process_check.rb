@@ -43,9 +43,9 @@ class SimpleProcessCheck < Scout::Plugin
     process_counts = processes_to_watch.map do |p|
       name, arg_string = p.split("/").map{|s|s.strip}
       if arg_string
-        res = ps_output.select{|row| row[0] == name && row[1].include?(arg_string) }.size
+        res = ps_output.select{|row| process_name_match?(row[0],name) && row[1].include?(arg_string) }.size
       else
-        res = ps_output.select{|row| row[0] == name }.size
+        res = ps_output.select{|row| process_name_match?(row[0],name) }.size
       end
       res
     end
@@ -70,5 +70,11 @@ class SimpleProcessCheck < Scout::Plugin
     remember :num_processes_present => num_processes_present
 
     report(:processes_present => num_processes_present)
+  end
+  
+  # True if a full match OR a match w/a colon appended to the name. Handles cases like:
+  # sshd: ubuntu (so 'sshd' will match)
+  def process_name_match?(output,name)
+    output == name or output == "#{name.strip}:"
   end
 end
