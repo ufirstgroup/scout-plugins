@@ -66,7 +66,7 @@ class RedisMonitor < Scout::Plugin
         # total queries since the last measure
         total = hits + misses
 
-        if total > 0
+        if hits > 0 and misses > 0
           report(:hits_ratio => 100 * hits / total)
         end
       end
